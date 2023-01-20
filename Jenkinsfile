@@ -30,19 +30,7 @@ pipeline {
                }
            }			
         }
-	    
-	stage('code-coverage') {
-	   steps {
-                echo 'code coverage..'
-	        sh script: '/opt/maven/bin/mvn cobertura:cobertura -Dcobertura.report.format=xml'
-                 }
-	   post {
-               success {
-                   cobertura coberturaReportFile: 'target/site/cobertura/coverage.xml'
-               }
-           }			
-        }
-	    
+	    	    
         stage('package') {
 	   steps {
                 echo 'package......'
