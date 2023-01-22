@@ -1,0 +1,6 @@
+---
+- name: "Execute tomcat role"
+  hosts: webserver
+  become: true
+  roles:
+    - tomcat
