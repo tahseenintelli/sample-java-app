@@ -1,0 +1,44 @@
+pipeline {
+    agent { label 'slave1' }
+    stages {
+        stage('Compile') {
+	        steps {
+                echo 'compiling ...'
+                git url: 'https://github.com/tahseenintelli/sample-java-app'
+                sh script: '/opt/maven/bin/mvn compile'
+           }
+        }
+
+        stage('Code Review-PMD') {
+	        steps {
+              echo 'code review ...'
+		      sh script: '/opt/maven/bin/mvn -P metrics pmd:pmd'
+           }
+	       post {
+              success {
+                recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
+               }
+           }		
+        }
+
+        stage('Unit Test') {
+            steps {
+                echo 'Unit Test ...'
+                sh script: '/opt/maven/bin/mvn test'
+            }
+	        post {
+               success {
+                   junit 'target/surefire-reports/*.xml'
+               }
+           }			
+        }
+
+	    	    
+        stage('package') {
+            steps {
+                echo 'package......'
+		        sh script: '/opt/maven/bin/mvn package'	
+           }		
+        }
+    }
+}
